@@ -87,7 +87,3 @@ Missing columns are filled safely.
 - Refunds and credits are not auto-approved.
 - Unsafe instructions and possible sensitive-data issues are flagged.
 - Drafts should be reviewed by a human before being sent.
-
-## GitHub safety
-
-Never push `.env` to GitHub. This repo includes `.gitignore` rules to protect `.env`, local virtual environments, logs, and generated outputs.
