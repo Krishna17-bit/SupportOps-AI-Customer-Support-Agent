@@ -1,0 +1,6 @@
+order_id,order_date,customer_email,amount,status,delivered_date
+SO-7781,2026-05-25,ana@example.com,129.00,Delivered,2026-05-29
+SO-7782,2026-05-29,rohan@example.com,49.00,Completed,2026-05-29
+SO-7783,2026-05-20,oliver@example.com,89.00,Shipped,
+SO-7784,2026-05-26,elena@example.com,199.00,Delivered,2026-05-28
+SO-7785,2026-04-16,dev@example.com,79.00,Delivered,2026-04-20
