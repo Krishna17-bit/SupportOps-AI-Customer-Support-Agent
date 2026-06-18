@@ -106,8 +106,9 @@ def refund_decision(row: Dict, category: str, order_history: pd.DataFrame) -> st
 def sla_risk(row: Dict, urgency: int) -> str:
     created = row.get("created_at", "")
     try:
-        created_dt = pd.to_datetime(created)
-        age_hours = (pd.Timestamp.now() - created_dt).total_seconds() / 3600
+        created_dt = pd.to_datetime(created).tz_localize(None)
+        now = pd.Timestamp.now().tz_localize(None)
+        age_hours = (now - created_dt).total_seconds() / 3600
     except Exception:
         age_hours = 0
 

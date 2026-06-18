@@ -1,49 +1,55 @@
 APP_CSS = """
 <style>
 :root {
-    --bg: #070707;
-    --panel: #111111;
-    --panel-2: #171717;
-    --text: #f7f7f7;
-    --muted: #b7b7b7;
-    --border: #2a2a2a;
-    --soft: #dedede;
+    --bg: #f8fafc;
+    --panel: #ffffff;
+    --panel-2: #ffffff;
+    --text: #0f172a;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --soft: #f1f5f9;
 
-    --orange: #ff8a1f;
-    --orange-hover: #ffa64d;
-    --blue: #2f80ed;
-    --blue-hover: #4f9cff;
+    --primary: #0f62fe;
+    --primary-hover: #0043ce;
+    --accent: #f97316;
 
-    --danger: #ffb4ab;
-    --warn: #ffe2a8;
-    --ok: #c9f7d2;
+    --danger-bg: #fee2e2;
+    --danger-text: #991b1b;
+    --warn-bg: #fef3c7;
+    --warn-text: #92400e;
+    --ok-bg: #d1fae5;
+    --ok-text: #065f46;
 }
 
-/* Main app background */
+/* Main app background overrides */
 html,
 body,
 .stApp,
 [data-testid="stAppViewContainer"] {
     background: var(--bg) !important;
     color: var(--text) !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
 }
 
 /* Streamlit top header */
 [data-testid="stHeader"] {
-    background: rgba(7, 7, 7, 0.92) !important;
+    background: rgba(248, 250, 252, 0.8) !important;
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
 }
 
-/* Main container */
+/* Main container padding */
 .block-container {
-    padding-top: 2rem !important;
+    padding-top: 1.5rem !important;
     padding-bottom: 3rem !important;
-    max-width: 1400px !important;
+    max-width: 1500px !important;
 }
 
-/* Sidebar */
+/* Sidebar styling overrides */
 [data-testid="stSidebar"] {
-    background: #0c0c0c !important;
+    background: #ffffff !important;
     border-right: 1px solid var(--border) !important;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.02);
 }
 
 [data-testid="stSidebar"] * {
@@ -53,415 +59,304 @@ body,
 [data-testid="stSidebar"] .small-muted,
 [data-testid="stSidebar"] p,
 [data-testid="stSidebar"] span {
-    color: var(--soft) !important;
+    color: var(--muted) !important;
 }
 
-/* General readable text, but do NOT force every div globally */
+/* Custom Navigation Header in Sidebar */
+.sidebar-header {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--primary) !important;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Headers & Markdown typography */
 h1, h2, h3, h4, h5, h6 {
     color: var(--text) !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.02em !important;
 }
 
-p, li, label {
+p, li, label, [data-testid="stMarkdownContainer"] p {
     color: var(--text) !important;
+    line-height: 1.5;
 }
 
-[data-testid="stMarkdownContainer"] p,
-[data-testid="stMarkdownContainer"] li,
-[data-testid="stMarkdownContainer"] span,
-[data-testid="stMarkdownContainer"] strong {
-    color: var(--text) !important;
-}
-
-/* Muted helper text */
 .small-muted {
     color: var(--muted) !important;
-    font-size: 0.88rem;
+    font-size: 0.85rem;
 }
 
-/* Hero section */
-.hero {
-    border: 1px solid var(--border);
-    background: linear-gradient(135deg, #151515 0%, #0b0b0b 58%, #171717 100%);
-    border-radius: 24px;
-    padding: 30px;
-    margin-bottom: 22px;
-    box-shadow: 0 18px 50px rgba(0,0,0,0.35);
-}
-
-.hero-title {
-    color: #ffffff !important;
-    font-size: 2.35rem;
-    font-weight: 850;
-    letter-spacing: -0.04em;
-    margin-bottom: 10px;
-}
-
-.hero-subtitle {
-    color: #c7c7c7 !important;
-    font-size: 1.03rem;
-    line-height: 1.65;
-    max-width: 980px;
-}
-
-/* Cards and panels */
+/* Custom premium card containers */
 .panel {
     border: 1px solid var(--border);
     background: var(--panel);
-    border-radius: 18px;
-    padding: 18px;
-    margin-bottom: 14px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.22);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+    transition: all 0.2s ease;
 }
 
-.panel,
-.panel * {
-    color: var(--text) !important;
+.panel:hover {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
 }
 
 .panel-compact {
     border: 1px solid var(--border);
     background: var(--panel);
-    border-radius: 16px;
-    padding: 13px 14px;
-    margin-bottom: 10px;
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-bottom: 12px;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.02);
 }
 
-.panel-compact,
-.panel-compact * {
-    color: var(--text) !important;
-}
-
-/* Metric cards */
+/* Metric card stylings */
 .metric-card {
     border: 1px solid var(--border);
-    background: var(--panel-2);
-    border-radius: 18px;
-    padding: 16px;
-    min-height: 112px;
+    background: var(--panel);
+    border-radius: 12px;
+    padding: 18px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 110px;
+    transition: transform 0.15s ease;
 }
 
-.metric-card * {
-    color: var(--text) !important;
+.metric-card:hover {
+    transform: translateY(-2px);
+    border-color: #cbd5e1;
 }
 
 .metric-label {
     color: var(--muted) !important;
     font-size: 0.85rem;
-    margin-bottom: 8px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
 .metric-value {
-    color: #ffffff !important;
-    font-size: 1.7rem;
-    font-weight: 850;
+    color: var(--text) !important;
+    font-size: 1.85rem;
+    font-weight: 700;
+    margin-top: 4px;
     letter-spacing: -0.03em;
 }
 
 .metric-note {
     color: var(--muted) !important;
-    font-size: 0.82rem;
-    margin-top: 8px;
+    font-size: 0.8rem;
+    margin-top: 6px;
 }
 
-/* Status pills */
+/* Status and Risk badge pills */
 .status-pill {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
     border: 1px solid var(--border);
-    background: #0d0d0d;
+    background: var(--soft);
     color: var(--text) !important;
-    border-radius: 999px;
-    padding: 4px 10px;
-    font-size: 0.82rem;
-    margin: 2px 4px 2px 0;
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    margin-right: 4px;
 }
 
 .pill-danger {
-    border-color: #6a2a2a;
-    color: var(--danger) !important;
+    background-color: var(--danger-bg) !important;
+    color: var(--danger-text) !important;
+    border-color: #fca5a5 !important;
 }
 
 .pill-warn {
-    border-color: #67501d;
-    color: var(--warn) !important;
+    background-color: var(--warn-bg) !important;
+    color: var(--warn-text) !important;
+    border-color: #fde047 !important;
 }
 
 .pill-ok {
-    border-color: #1d5e30;
-    color: var(--ok) !important;
+    background-color: var(--ok-bg) !important;
+    color: var(--ok-text) !important;
+    border-color: #86efac !important;
 }
 
-/* Evidence blocks */
+/* Outage or Incident warning banners */
+.sla-warning-banner {
+    background: #fef2f2;
+    border-left: 4px solid #ef4444;
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    color: #991b1b !important;
+    font-weight: 500;
+}
+
+/* Evidence grounding block */
 .evidence {
-    border-left: 3px solid var(--blue);
-    background: #101010;
-    border-radius: 12px;
+    border-left: 3px solid var(--primary);
+    background: var(--soft);
+    border-radius: 8px;
     padding: 12px 14px;
-    margin: 9px 0;
-    color: var(--text) !important;
+    margin: 8px 0;
+    font-size: 0.9rem;
 }
 
 .evidence b {
-    color: #ffffff !important;
+    color: var(--text) !important;
+    font-weight: 600;
 }
 
-.evidence span,
-.evidence p {
-    color: var(--soft) !important;
+.evidence span, .evidence p {
+    color: var(--muted) !important;
 }
 
-/* MAIN STREAMLIT BUTTONS - orange, readable */
+/* Streamlit button customizations */
 .stButton > button {
-    background: var(--orange) !important;
-    color: #0b0b0b !important;
-    border: 1px solid var(--orange) !important;
-    border-radius: 13px !important;
-    font-weight: 850 !important;
-    min-height: 44px !important;
-    box-shadow: 0 8px 22px rgba(255, 138, 31, 0.18) !important;
+    background: var(--primary) !important;
+    color: #ffffff !important;
+    border: 1px solid var(--primary) !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    font-size: 0.9rem !important;
+    min-height: 40px !important;
+    padding: 0.5rem 1rem !important;
+    transition: all 0.15s ease !important;
+    box-shadow: 0 1px 2px 0 rgba(15, 98, 254, 0.1) !important;
 }
 
 .stButton > button:hover {
-    background: var(--orange-hover) !important;
-    color: #000000 !important;
-    border-color: var(--orange-hover) !important;
-}
-
-.stButton > button:disabled,
-.stButton > button[disabled] {
-    background: #242424 !important;
-    color: #777777 !important;
-    border-color: #333333 !important;
-    box-shadow: none !important;
+    background: var(--primary-hover) !important;
+    border-color: var(--primary-hover) !important;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08) !important;
 }
 
 .stButton > button p,
 .stButton > button span,
 .stButton > button div {
-    color: #0b0b0b !important;
-    font-weight: 850 !important;
+    color: #ffffff !important;
 }
 
-.stButton > button:disabled p,
-.stButton > button:disabled span,
-.stButton > button:disabled div {
-    color: #777777 !important;
-}
-
-/* DOWNLOAD BUTTONS - blue */
+/* Secondary Actions buttons */
+div[data-testid="stFormSubmitButton"] button,
 .stDownloadButton > button {
-    background: var(--blue) !important;
-    color: #ffffff !important;
-    border: 1px solid var(--blue) !important;
-    border-radius: 13px !important;
-    font-weight: 850 !important;
-    min-height: 44px !important;
-    box-shadow: 0 8px 22px rgba(47, 128, 237, 0.18) !important;
+    background: #ffffff !important;
+    color: var(--text) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    min-height: 40px !important;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05) !important;
 }
 
+div[data-testid="stFormSubmitButton"] button:hover,
 .stDownloadButton > button:hover {
-    background: var(--blue-hover) !important;
-    color: #ffffff !important;
-    border-color: var(--blue-hover) !important;
+    background: var(--soft) !important;
+    border-color: #cbd5e1 !important;
 }
 
+div[data-testid="stFormSubmitButton"] button p,
 .stDownloadButton > button p,
-.stDownloadButton > button span,
-.stDownloadButton > button div {
-    color: #ffffff !important;
-    font-weight: 850 !important;
-}
-
-/* FILE UPLOADER - dark box, blue upload button, readable text */
-[data-testid="stFileUploader"] {
+div[data-testid="stFormSubmitButton"] button span,
+.stDownloadButton > button span {
     color: var(--text) !important;
 }
 
+/* File Upload boxes */
 [data-testid="stFileUploader"] section {
-    background: #111111 !important;
-    border: 1px dashed #3a3a3a !important;
-    border-radius: 16px !important;
+    background: #ffffff !important;
+    border: 2px dashed var(--border) !important;
+    border-radius: 12px !important;
 }
 
 [data-testid="stFileUploader"] section * {
-    color: #e9e9e9 !important;
-}
-
-[data-testid="stFileUploader"] label,
-[data-testid="stFileUploader"] label * {
-    color: #ffffff !important;
-}
-
-[data-testid="stFileUploader"] small {
-    color: #bdbdbd !important;
-}
-
-[data-testid="stFileUploaderDropzone"] {
-    background: #111111 !important;
-    border: 1px dashed #3a3a3a !important;
-    border-radius: 16px !important;
-}
-
-[data-testid="stFileUploaderDropzone"] * {
-    color: #e9e9e9 !important;
+    color: var(--text) !important;
 }
 
 [data-testid="stFileUploaderDropzone"] button {
-    background: var(--blue) !important;
+    background: var(--primary) !important;
     color: #ffffff !important;
-    border: 1px solid var(--blue) !important;
-    border-radius: 12px !important;
-    font-weight: 850 !important;
-}
-
-[data-testid="stFileUploaderDropzone"] button:hover {
-    background: var(--blue-hover) !important;
-    color: #ffffff !important;
-    border-color: var(--blue-hover) !important;
+    border: 1px solid var(--primary) !important;
+    border-radius: 8px !important;
 }
 
 [data-testid="stFileUploaderDropzone"] button p,
-[data-testid="stFileUploaderDropzone"] button span,
-[data-testid="stFileUploaderDropzone"] button div {
+[data-testid="stFileUploaderDropzone"] button span {
     color: #ffffff !important;
-    font-weight: 850 !important;
 }
 
-/* Inputs */
+/* Input boxes & Text areas styling */
 .stTextInput input,
 .stTextArea textarea,
-.stNumberInput input {
-    background: #101010 !important;
-    color: #ffffff !important;
+.stSelectbox div[data-baseweb="select"] > div {
+    background: #ffffff !important;
+    color: var(--text) !important;
     border: 1px solid var(--border) !important;
-    border-radius: 12px !important;
+    border-radius: 8px !important;
 }
 
-.stTextInput input::placeholder,
-.stTextArea textarea::placeholder {
-    color: #888888 !important;
-}
-
-.stTextInput label,
-.stTextArea label,
-.stNumberInput label,
-.stSlider label,
-.stCheckbox label {
-    color: #ffffff !important;
-}
-
-/* Select boxes */
-.stSelectbox div[data-baseweb="select"] > div,
-.stMultiSelect div[data-baseweb="select"] > div {
-    background: #101010 !important;
-    color: #ffffff !important;
-    border-color: var(--border) !important;
-    border-radius: 12px !important;
-}
-
-.stSelectbox *,
-.stMultiSelect * {
-    color: #ffffff !important;
-}
-
-/* Checkbox */
-.stCheckbox label span {
-    color: #ffffff !important;
-}
-
-/* Slider */
-.stSlider * {
-    color: #ffffff !important;
-}
-
-/* Dataframe */
-[data-testid="stDataFrame"] {
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    overflow: hidden;
-}
-
-/* Tabs - dark normal, orange selected */
+/* Tab menu */
 .stTabs [data-baseweb="tab-list"] {
-    gap: 8px;
-    border-bottom: 1px solid var(--border);
+    gap: 4px;
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 4px;
 }
 
 .stTabs [data-baseweb="tab"] {
-    background: #111111 !important;
-    border-radius: 999px !important;
-    border: 1px solid var(--border) !important;
-    color: #ffffff !important;
-    padding: 9px 16px !important;
-    font-weight: 750 !important;
+    background: transparent !important;
+    border-radius: 6px !important;
+    border: none !important;
+    color: var(--muted) !important;
+    padding: 8px 16px !important;
+    font-weight: 600 !important;
 }
 
-.stTabs [data-baseweb="tab"] p,
-.stTabs [data-baseweb="tab"] span,
-.stTabs [data-baseweb="tab"] div {
-    color: #ffffff !important;
-    font-weight: 750 !important;
+.stTabs [data-baseweb="tab"] p {
+    color: var(--muted) !important;
 }
 
 .stTabs [data-baseweb="tab"][aria-selected="true"] {
-    background: var(--orange) !important;
-    border-color: var(--orange) !important;
-    color: #111111 !important;
+    background: var(--soft) !important;
+    color: var(--primary) !important;
 }
 
-.stTabs [data-baseweb="tab"][aria-selected="true"] p,
-.stTabs [data-baseweb="tab"][aria-selected="true"] span,
-.stTabs [data-baseweb="tab"][aria-selected="true"] div {
-    color: #111111 !important;
-    font-weight: 850 !important;
+.stTabs [data-baseweb="tab"][aria-selected="true"] p {
+    color: var(--primary) !important;
+    font-weight: 700 !important;
 }
 
 /* Expanders */
 .streamlit-expanderHeader {
-    background: #111111 !important;
-    color: #ffffff !important;
-    border-radius: 12px !important;
+    background: #ffffff !important;
+    color: var(--text) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 8px !important;
 }
 
 .streamlit-expanderHeader * {
-    color: #ffffff !important;
+    color: var(--text) !important;
 }
 
-/* Alerts */
+/* Alert notifications overrides */
 [data-testid="stAlert"] {
-    background: #111111 !important;
-    color: #ffffff !important;
+    background: #ffffff !important;
+    color: var(--text) !important;
     border: 1px solid var(--border) !important;
-    border-radius: 14px !important;
+    border-radius: 10px !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
 
 [data-testid="stAlert"] * {
-    color: #ffffff !important;
+    color: var(--text) !important;
 }
 
-/* Code blocks */
-code,
-pre {
-    color: #f7f7f7 !important;
-    background: #111111 !important;
-}
-
-/* Horizontal line */
-hr {
-    border-color: var(--border) !important;
-}
-
-/* Links */
-a {
-    color: var(--blue-hover) !important;
-}
-
-/* Make captions readable */
-[data-testid="stCaptionContainer"],
-[data-testid="stCaptionContainer"] * {
-    color: #bdbdbd !important;
-}
-
-/* Hide Streamlit default menu/footer less aggressively */
+/* Hide streamlit default menu */
 #MainMenu {
     visibility: hidden;
 }
@@ -469,5 +364,50 @@ a {
 footer {
     visibility: hidden;
 }
+
+/* Custom Timeline / Activity Log */
+.timeline-item {
+    padding-left: 20px;
+    border-left: 2px solid var(--border);
+    position: relative;
+    padding-bottom: 12px;
+}
+
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -6px;
+    top: 4px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--primary);
+}
+
+.timeline-time {
+    font-size: 0.75rem;
+    color: var(--muted);
+    font-weight: 500;
+}
+
+.timeline-content {
+    font-size: 0.875rem;
+    margin-top: 2px;
+}
+
+/* Sticky top notification for Demo Mode */
+.demo-banner {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    color: #1e40af !important;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
 </style>
-"""

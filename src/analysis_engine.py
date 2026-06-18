@@ -82,6 +82,8 @@ def analyze_tickets(
     max_tickets: int = 100,
     ai_refine_limit: int = 25,
 ) -> Tuple[pd.DataFrame, List[Dict]]:
+    from .database import save_ticket, log_audit
+
     working = tickets_df.head(max_tickets).copy()
     rows: List[Dict] = []
     ai_items: List[Dict] = []
@@ -118,7 +120,7 @@ def analyze_tickets(
             "email": _safe_str(raw.get("email")),
             "subject": _safe_str(raw.get("subject")),
             "body": _safe_str(raw.get("body")),
-            "channel": _safe_str(raw.get("channel")),
+            "channel": _safe_str(raw.get("channel")) or "email",
             "created_at": _safe_str(raw.get("created_at")),
             "order_id": _safe_str(raw.get("order_id")),
             "category": category,
@@ -156,21 +158,56 @@ def analyze_tickets(
     refinements = ai_engine.refine_batch(ai_items)
     for item in rows:
         refined = refinements.get(item["ticket_id"])
-        if not refined:
-            continue
-        item["category"] = refined.get("category") or item["category"]
-        item["urgency_score"] = int(refined.get("urgency_score") or item["urgency_score"])
-        item["sentiment"] = refined.get("sentiment") or item["sentiment"]
-        item["churn_risk"] = int(refined.get("churn_risk") or item["churn_risk"])
-        item["escalation_required"] = bool(refined.get("escalation_required", item["escalation_required"]))
-        item["refund_decision"] = refined.get("refund_decision") or item["refund_decision"]
-        item["suggested_reply"] = refined.get("suggested_reply") or item["suggested_reply"]
-        item["internal_note"] = refined.get("internal_note") or item["internal_note"]
-        item["missing_info"] = "; ".join(refined.get("missing_info", [])) if isinstance(refined.get("missing_info"), list) else item["missing_info"]
-        item["safety_flags"] = "; ".join(refined.get("safety_flags", [])) if isinstance(refined.get("safety_flags"), list) else item["safety_flags"]
-        item["qa_score"] = int(refined.get("qa_score") or item["qa_score"])
-        item["sla_risk"] = sla_risk(item, item["urgency_score"])
-        item["used_ai_refinement"] = True
+        if refined:
+            item["category"] = refined.get("category") or item["category"]
+            item["urgency_score"] = int(refined.get("urgency_score") or item["urgency_score"])
+            item["sentiment"] = refined.get("sentiment") or item["sentiment"]
+            item["churn_risk"] = int(refined.get("churn_risk") or item["churn_risk"])
+            item["escalation_required"] = bool(refined.get("escalation_required", item["escalation_required"]))
+            item["refund_decision"] = refined.get("refund_decision") or item["refund_decision"]
+            item["suggested_reply"] = refined.get("suggested_reply") or item["suggested_reply"]
+            item["internal_note"] = refined.get("internal_note") or item["internal_note"]
+            item["missing_info"] = "; ".join(refined.get("missing_info", [])) if isinstance(refined.get("missing_info"), list) else item["missing_info"]
+            item["safety_flags"] = "; ".join(refined.get("safety_flags", [])) if isinstance(refined.get("safety_flags"), list) else item["safety_flags"]
+            item["qa_score"] = int(refined.get("qa_score") or item["qa_score"])
+            item["sla_risk"] = sla_risk(item, item["urgency_score"])
+            item["used_ai_refinement"] = True
+
+        # Convert boolean fields to integers or keep consistent for SQLite
+        db_ticket = {
+            "ticket_id": item["ticket_id"],
+            "customer_name": item["customer_name"],
+            "email": item["email"],
+            "subject": item["subject"],
+            "body": item["body"],
+            "channel": item["channel"],
+            "status": "Open" if item["escalation_required"] else "New",
+            "priority": "High" if item["urgency_score"] >= 70 else "Medium",
+            "category": item["category"],
+            "intent": item["category"] + " Intent",
+            "sentiment": item["sentiment"],
+            "sla_due_time": item.get("sla_due_time", ""),
+            "sla_risk": item["sla_risk"],
+            "churn_risk": item["churn_risk"],
+            "assigned_team": "Support Level 2" if item["escalation_required"] else "Triage Pool",
+            "assigned_agent": "",
+            "created_at": item["created_at"],
+            "last_updated_at": item["created_at"],
+            "order_id": item["order_id"],
+            "latest_message": item["body"],
+            "conversation_summary": item["subject"] + " summary details...",
+            "suggested_reply": item["suggested_reply"],
+            "linked_kb_article_id": "",
+            "escalation_status": "Escalated" if item["escalation_required"] else "None",
+            "tags": item["category"].replace(" ", "-"),
+            "internal_note": item["internal_note"],
+            "missing_info": item["missing_info"],
+            "safety_flags": item["safety_flags"],
+            "qa_score": item["qa_score"],
+            "resolution_confidence": item["resolution_confidence"],
+            "used_ai_refinement": 1 if item["used_ai_refinement"] else 0
+        }
+        save_ticket(db_ticket)
 
     output_df = pd.DataFrame(rows)
     audit = []
@@ -192,6 +229,8 @@ def analyze_tickets(
                 "reply": item["suggested_reply"],
             }
         )
+
+    log_audit("Run support analysis", f"Analyzed {len(rows)} tickets", f"Persisted tickets to database", ai_engine.provider, 0, "success")
     return output_df, audit
 
 

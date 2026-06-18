@@ -8,3 +8,9 @@ __pycache__/
 outputs/
 *.log
 .DS_Store
+*.db
+*.sqlite
+uploads/
+exports/
+logs/
+node_modules/

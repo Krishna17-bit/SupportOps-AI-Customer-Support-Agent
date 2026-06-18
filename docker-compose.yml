@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  supportops-ai:
+    build: .
+    container_name: supportops-ai-app
+    ports:
+      - "8501:8501"
+    environment:
+      - LLM_PROVIDER=mock
+      - ENABLE_DEMO_DATA=true
+    volumes:
+      - .:/app
+    restart: unless-stopped
